@@ -1,26 +1,38 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <title>Tic Tac Toe Football Game</title>
   <style>
-    /* General Styles */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      background: linear-gradient(to bottom right, #f0f8ff, #d1e0e0);
       margin: 0;
       padding: 0;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+    }
+
+    /* Card Container */
+    .card {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
     }
 
     h1 {
       color: #333;
       font-size: 2.5rem;
       margin-bottom: 20px;
-      text-align: center;
     }
 
     /* Game Board */
@@ -30,6 +42,9 @@
       grid-template-rows: repeat(3, min(100px, 20vw));
       gap: 5px;
       margin: 20px 0;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 5px;
     }
 
     .cell {
@@ -43,7 +58,7 @@
       font-size: 2rem;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
       user-select: none;
     }
 
@@ -55,7 +70,6 @@
     #status {
       font-size: 1.5rem;
       margin: 20px 0;
-      text-align: center;
       padding: 10px 20px;
       border-radius: 5px;
       color: #fff;
@@ -65,7 +79,6 @@
       transition: background-color 0.3s ease;
     }
 
-    /* Specific Styles for Player O's Turn */
     #status[data-player="O"] {
       background-color: #00008B;
     }
@@ -79,22 +92,16 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.20s ease;
+      transition: all 0.2s ease;
+      margin-top: 10px;
+    }
+
+    #reset-button:hover {
+      background-color: #45a049;
     }
 
     #reset-button.clicked {
       background-color: #FF6347;
-    }
-
-    /* Ads Container */
-    .ads-container {
-      margin: 20px 0;
-      text-align: center;
-    }
-
-    .ads-container img {
-      max-width: 100%;
-      height: auto;
     }
 
     /* Responsive Design */
@@ -116,21 +123,12 @@
         padding: 8px 16px;
       }
     }
-
-    /* Center Game Board and Reset Button */
-    .center-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-    }
   </style>
 </head>
 <body>
-  <h1>Tic Tac Toe Football</h1>
+  <div class="card">
+    <h1>Tic Tac Toe Football</h1>
 
-  <div class="center-container">
     <div class="game-board">
       <div class="cell" data-index="0"></div>
       <div class="cell" data-index="1"></div>
@@ -144,12 +142,7 @@
     </div>
 
     <button id="reset-button">Reset Game</button>
-  </div>
-
-  <p data-player="X" id="status">Player X's Turn</p>
-
-  <div class="ads-container">
-    <img alt="Advertisement" src="https://via.placeholder.com/300x100" />
+    <p data-player="X" id="status">Player X's Turn ⚽</p>
   </div>
 
   <script>
@@ -167,8 +160,8 @@
     ];
 
     const playerIcons = {
-      X: '⚽', // Football icon
-      O: '🥅'  // Goalpost icon
+      X: '⚽',
+      O: '🥅'
     };
 
     function updateStatusIcon() {
@@ -237,7 +230,6 @@
     });
 
     resetButton.addEventListener('click', resetGame);
-    updateStatusIcon();
   </script>
 </body>
 </html>
