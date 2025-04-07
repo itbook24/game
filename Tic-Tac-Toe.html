@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <title>Tic Tac Toe Football Game</title>
@@ -13,12 +13,25 @@
       margin: 0;
       padding: 0;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
       min-height: 100vh;
     }
 
-    /* Card Container */
+    header, footer {
+      background-color: #222;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
     .card {
       background-color: #ffffff;
       padding: 30px;
@@ -35,7 +48,6 @@
       margin-bottom: 20px;
     }
 
-    /* Game Board */
     .game-board {
       display: grid;
       grid-template-columns: repeat(3, min(100px, 20vw));
@@ -66,7 +78,6 @@
       background-color: #e0e0e0;
     }
 
-    /* Game Status */
     #status {
       font-size: 1.5rem;
       margin: 20px 0;
@@ -83,7 +94,6 @@
       background-color: #00008B;
     }
 
-    /* Reset Button */
     #reset-button {
       padding: 10px 20px;
       font-size: 1rem;
@@ -104,7 +114,17 @@
       background-color: #FF6347;
     }
 
-    /* Responsive Design */
+    /* Ad Sections */
+    .ad-slot {
+      background-color: #eee;
+      color: #444;
+      text-align: center;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 0.95rem;
+      border: 1px dashed #aaa;
+    }
+
     @media (max-width: 600px) {
       h1 {
         font-size: 2rem;
@@ -126,24 +146,34 @@
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Tic Tac Toe Football</h1>
+  <header>
+    <div class="ad-slot">🏈 Header Ad / Site Logo / Navigation</div>
+  </header>
 
-    <div class="game-board">
-      <div class="cell" data-index="0"></div>
-      <div class="cell" data-index="1"></div>
-      <div class="cell" data-index="2"></div>
-      <div class="cell" data-index="3"></div>
-      <div class="cell" data-index="4"></div>
-      <div class="cell" data-index="5"></div>
-      <div class="cell" data-index="6"></div>
-      <div class="cell" data-index="7"></div>
-      <div class="cell" data-index="8"></div>
+  <main>
+    <div class="card">
+      <h1>Tic Tac Toe Football</h1>
+
+      <div class="game-board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+
+      <button id="reset-button">Reset Game</button>
+      <p data-player="X" id="status">Player X's Turn ⚽</p>
     </div>
+  </main>
 
-    <button id="reset-button">Reset Game</button>
-    <p data-player="X" id="status">Player X's Turn ⚽</p>
-  </div>
+  <footer>
+    <div class="ad-slot">📢 Footer Ad Space / Contact / Legal</div>
+  </footer>
 
   <script>
     const cells = document.querySelectorAll('.cell');
@@ -171,7 +201,6 @@
     function handleCellClick(event) {
       const clickedCell = event.target;
       const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
-
       if (gameState[clickedCellIndex] !== '' || !gameActive) return;
 
       gameState[clickedCellIndex] = currentPlayer;
@@ -181,11 +210,9 @@
 
     function checkForWinner() {
       let roundWon = false;
-
       for (let condition of winningConditions) {
         const [a, b, c] = condition;
-        if (gameState[a] === '' || gameState[b] === '' || gameState[c] === '') continue;
-        if (gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
+        if (gameState[a] && gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
           roundWon = true;
           break;
         }
@@ -233,3 +260,4 @@
   </script>
 </body>
 </html>
+
