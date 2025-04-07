@@ -1,10 +1,6 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <meta content="Play Tic Tac Toe Football, a fun and strategic twist on the classic game! Enjoy a football-themed version of Tic Tac Toe with dynamic icons, responsive design, and interactive gameplay. Perfect for football fans and strategy lovers!" name="description">
-  <meta content="Tic Tac Toe Football, Football Game, Tic Tac Toe, Online Game, Strategy Game" name="keywords">
-  <meta content="Your Name" name="author">
   <title>Tic Tac Toe Football Game</title>
   <style>
     /* General Styles */
@@ -48,7 +44,7 @@
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s ease;
-      user-select: none; /* Prevent text selection */
+      user-select: none;
     }
 
     .cell:hover {
@@ -63,15 +59,15 @@
       padding: 10px 20px;
       border-radius: 5px;
       color: #fff;
-      background-color: #4CAF50; /* Default green background for Player X */
-      border: 2px solid #333; /* Default border */
+      background-color: #4CAF50;
+      border: 2px solid #333;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
 
     /* Specific Styles for Player O's Turn */
     #status[data-player="O"] {
-      background-color: #00008B; /* DarkBlue background for Player O */
+      background-color: #00008B;
     }
 
     /* Reset Button */
@@ -79,7 +75,7 @@
       padding: 10px 20px;
       font-size: 1rem;
       color: #fff;
-      background-color: #4CAF50; /* Green background */
+      background-color: #4CAF50;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -87,7 +83,7 @@
     }
 
     #reset-button.clicked {
-      background-color: #FF6347; /* Red background when clicked */
+      background-color: #FF6347;
     }
 
     /* Ads Container */
@@ -134,9 +130,7 @@
 <body>
   <h1>Tic Tac Toe Football</h1>
 
-  <!-- Center Game Board and Reset Button -->
   <div class="center-container">
-    <!-- Game Board -->
     <div class="game-board">
       <div class="cell" data-index="0"></div>
       <div class="cell" data-index="1"></div>
@@ -149,20 +143,16 @@
       <div class="cell" data-index="8"></div>
     </div>
 
-    <!-- Reset Button -->
     <button id="reset-button">Reset Game</button>
   </div>
 
-  <!-- Game Status -->
   <p data-player="X" id="status">Player X's Turn</p>
 
-  <!-- Ads Container -->
   <div class="ads-container">
     <img alt="Advertisement" src="https://via.placeholder.com/300x100" />
   </div>
 
   <script>
-    // Game Logic
     const cells = document.querySelectorAll('.cell');
     const statusText = document.getElementById('status');
     const resetButton = document.getElementById('reset-button');
@@ -171,23 +161,20 @@
     let gameState = ['', '', '', '', '', '', '', '', ''];
 
     const winningConditions = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-      [0, 4, 8], [2, 4, 6]             // Diagonals
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
     ];
 
-    // Icons for Players
     const playerIcons = {
-      X: '🏀', // Football icon for Player X
-      O: '🥅'  // Goalpost icon for Player O
+      X: '⚽', // Football icon
+      O: '🥅'  // Goalpost icon
     };
 
-    // Update Status Button Icon
     function updateStatusIcon() {
       statusText.textContent = `Player ${currentPlayer}'s Turn ${playerIcons[currentPlayer]}`;
     }
 
-    // Handle Cell Click (Mouse and Touch Events)
     function handleCellClick(event) {
       const clickedCell = event.target;
       const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
@@ -195,12 +182,10 @@
       if (gameState[clickedCellIndex] !== '' || !gameActive) return;
 
       gameState[clickedCellIndex] = currentPlayer;
-      clickedCell.textContent = playerIcons[currentPlayer]; // Set icon based on current player
-
+      clickedCell.textContent = playerIcons[currentPlayer];
       checkForWinner();
     }
 
-    // Check for Winner
     function checkForWinner() {
       let roundWon = false;
 
@@ -215,48 +200,43 @@
 
       if (roundWon) {
         statusText.textContent = `Player ${currentPlayer} Wins! ${playerIcons[currentPlayer]}`;
-        statusText.setAttribute('data-player', currentPlayer); // Update player attribute
+        statusText.setAttribute('data-player', currentPlayer);
         gameActive = false;
         return;
       }
 
       if (!gameState.includes('')) {
         statusText.textContent = 'Draw!';
-        statusText.removeAttribute('data-player'); // Remove player attribute for draw
+        statusText.removeAttribute('data-player');
         gameActive = false;
         return;
       }
 
       currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-      updateStatusIcon(); // Update status button icon
-      statusText.setAttribute('data-player', currentPlayer); // Update player attribute
+      updateStatusIcon();
+      statusText.setAttribute('data-player', currentPlayer);
     }
 
-    // Reset Game
     function resetGame() {
       gameState = ['', '', '', '', '', '', '', '', ''];
       gameActive = true;
       currentPlayer = 'X';
-      updateStatusIcon(); // Reset status button icon
-      statusText.setAttribute('data-player', currentPlayer); // Reset player attribute
+      updateStatusIcon();
+      statusText.setAttribute('data-player', currentPlayer);
       cells.forEach(cell => cell.textContent = '');
 
-      // Change button color to red when clicked
       resetButton.classList.add('clicked');
       setTimeout(() => {
         resetButton.classList.remove('clicked');
-      }, 200); // Revert to green after 200ms
+      }, 200);
     }
 
-    // Add Event Listeners
     cells.forEach(cell => {
       cell.addEventListener('click', handleCellClick);
       cell.addEventListener('touchstart', handleCellClick, { passive: true });
     });
 
     resetButton.addEventListener('click', resetGame);
-
-    // Initialize Status Button Icon
     updateStatusIcon();
   </script>
 </body>
