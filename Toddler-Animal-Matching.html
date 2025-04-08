@@ -1,29 +1,240 @@
-<!DOCTYPE html>
+<!DOCTYPE html>  
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Animal Match Adventure</title>
   <style>
-    /* Your existing CSS styles here */
-    /* Add styles if needed for ad placements */
-    .ad-slot {
-      width: 300px;
-      height: 250px;
-      margin: 20px auto;
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #f0f9ff;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .game-center-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .game-container {
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      padding: 25px;
+      width: 100%;
+      max-width: 900px;
       text-align: center;
+    }
+
+    h1 {
+      color: #ff6b6b;
+      margin-bottom: 5px;
+      font-size: 2.5rem;
+    }
+
+    .subtitle {
+      color: #4d96ff;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .level-selector {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .level-btn {
+      background-color: #4d96ff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+      min-width: 80px;
+    }
+
+    .level-btn:hover {
+      background-color: #3a7bd5;
+      transform: scale(1.05);
+    }
+
+    .level-btn.active {
+      background-color: #ff6b6b;
+      box-shadow: 0 4px 8px rgba(255,107,107,0.3);
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+      font-size: 1.2rem;
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .game-board {
+      display: grid;
+      gap: 10px;
+      margin: 0 auto;
+      justify-content: center;
+    }
+
+    .card {
+      width: 70px;
+      height: 70px;
+      background-color: #ffd166;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      transform-style: preserve-3d;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .card.flipped {
+      background-color: white;
+      transform: rotateY(180deg);
+    }
+
+    .card.matched {
+      background-color: #06d6a0;
+      cursor: default;
+      transform: rotateY(180deg);
+      box-shadow: 0 0 10px #06d6a0;
+    }
+
+    .card.shake {
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    .controls {
+      margin-top: 20px;
+    }
+
+    .btn {
+      background-color: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(255,107,107,0.3);
+    }
+
+    .btn:hover {
+      background-color: #ff5252;
+      transform: scale(1.05);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      animation: modalAppear 0.5s;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    @keyframes modalAppear {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal h2 {
+      color: #ff6b6b;
+      font-size: 2rem;
+      margin-top: 0;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background-color: #ff6b6b;
+      animation: confettiFall 3s linear forwards;
+      border-radius: 50%;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .card {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
+      
+      .level-btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        min-width: 70px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .game-container {
+        max-width: 95%;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Advertisement section at the top -->
+  <div class="ad-top">
+    <script type="text/javascript" src="https://udbaa.com/bnr.php?section=games&pub=225212&format=300x250&ga=g"></script>
+    <noscript><a href="https://yllix.com/publishers/225212" target="_blank"><img src="//ylx-aff.advertica-cdn.com/pub/300x250.png" style="border:none;margin:0;padding:0;vertical-align:baseline;" alt="ylliX - Online Advertising Network" /></a></noscript>
+  </div>
+
   <div class="game-center-container">
     <div class="game-container">
-      <!-- Ad Slot 1: Above the game title -->
-      <div class="ad-slot">
-        <script type="text/javascript" src="https://udbaa.com/bnr.php?section=games&pub=225212&format=300x250&ga=g"></script>
-        <noscript><a href="https://yllix.com/publishers/225212" target="_blank"><img src="//ylx-aff.advertica-cdn.com/pub/300x250.png" style="border:none;margin:0;padding:0;vertical-align:baseline;" alt="ylliX - Online Advertising Network" /></a></noscript>
-      </div>
-      
       <h1>Animal Match Adventure</h1>
       <p class="subtitle">Match the animals and have fun!</p>
       
@@ -44,13 +255,13 @@
       <div class="controls">
         <button class="btn" id="reset-btn">New Game</button>
       </div>
-      
-      <!-- Ad Slot 2: Below the game board -->
-      <div class="ad-slot">
-        <script type="text/javascript" src="https://udbaa.com/bnr.php?section=games&pub=225212&format=300x250&ga=g"></script>
-        <noscript><a href="https://yllix.com/publishers/225212" target="_blank"><img src="//ylx-aff.advertica-cdn.com/pub/300x250.png" style="border:none;margin:0;padding:0;vertical-align:baseline;" alt="ylliX - Online Advertising Network" /></a></noscript>
-      </div>
     </div>
+  </div>
+
+  <!-- Advertisement section at the bottom -->
+  <div class="ad-bottom">
+    <script type="text/javascript" src="https://udbaa.com/bnr.php?section=games&pub=225212&format=300x250&ga=g"></script>
+    <noscript><a href="https://yllix.com/publishers/225212" target="_blank"><img src="//ylx-aff.advertica-cdn.com/pub/300x250.png" style="border:none;margin:0;padding:0;vertical-align:baseline;" alt="ylliX - Online Advertising Network" /></a></noscript>
   </div>
 
   <!-- Win Modal -->
@@ -65,7 +276,198 @@
   </div>
 
   <script>
-    // Your existing JavaScript code here
+    // Game data with 12 pairs for hard level (24 cards total)
+    const animals = {
+      easy: ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊"], // 6 pairs (12 cards)
+      medium: ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼"], // 8 pairs (16 cards)
+      hard: ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮"] // 12 pairs (24 cards)
+    };
+
+    // Game state
+    let currentLevel = 'easy';
+    let cards = [];
+    let flippedCards = [];
+    let matchedPairs = 0;
+    let moves = 0;
+    let score = 0;
+    let gameActive = false;
+
+    // DOM elements
+    const gameBoard = document.getElementById('game-board');
+    const resetBtn = document.getElementById('reset-btn');
+    const levelBtns = document.querySelectorAll('.level-btn');
+    const levelDisplay = document.getElementById('level-display');
+    const moveCounter = document.getElementById('move-counter');
+    const scoreDisplay = document.getElementById('score-display');
+    const winModal = document.getElementById('win-modal');
+    const finalMoves = document.getElementById('final-moves');
+    const finalScore = document.getElementById('final-score');
+    const nextLevelBtn = document.getElementById('next-level-btn');
+    const playAgainBtn = document.getElementById('play-again-btn');
+
+    // Initialize game
+    function initGame() {
+      // Clear the board
+      gameBoard.innerHTML = '';
+      
+      // Get animals for current level
+      const levelAnimals = animals[currentLevel];
+      cards = [...levelAnimals, ...levelAnimals];
+      
+      // Shuffle cards
+      shuffleArray(cards);
+      
+      // Create cards
+      cards.forEach((animal, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.index = index;
+        card.textContent = animal;
+        card.addEventListener('click', flipCard);
+        gameBoard.appendChild(card);
+      });
+      
+      // Set up game board grid
+      const pairs = levelAnimals.length;
+      let columns;
+      if (pairs <= 6) columns = 4;      // Easy: 3x4 grid (6 pairs)
+      else if (pairs <= 8) columns = 4;  // Medium: 4x4 grid (8 pairs)
+      else columns = 6;                  // Hard: 6x4 grid (12 pairs - 24 cards)
+      
+      gameBoard.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;      
+      flippedCards = [];
+      matchedPairs = 0;
+      moves = 0;
+      score = 0;
+      gameActive = true;
+      
+      moveCounter.textContent = moves;
+      scoreDisplay.textContent = score;
+      levelDisplay.textContent = currentLevel.charAt(0).toUpperCase() + currentLevel.slice(1);
+    }
+
+    // Shuffle array
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    // Flip card
+    function flipCard() {
+      if (!gameActive) return;
+      if (flippedCards.length === 2) return;
+      if (this.classList.contains('flipped') || this.classList.contains('matched')) return;
+      
+      this.classList.add('flipped');
+      flippedCards.push(this);
+      
+      if (flippedCards.length === 2) {
+        moves++;
+        moveCounter.textContent = moves;
+        checkMatch();
+      }
+    }
+
+    // Check for match
+    function checkMatch() {
+      const [card1, card2] = flippedCards;
+      
+      if (card1.textContent === card2.textContent) {
+        // Match found
+        card1.classList.add('matched');
+        card2.classList.add('matched');
+        matchedPairs++;
+        
+        const levelBonus = {
+          easy: 10,
+          medium: 20,
+          hard: 30
+        };
+        score += 50 + levelBonus[currentLevel] - Math.floor(moves/2);
+        scoreDisplay.textContent = Math.max(0, score);
+        
+        if (matchedPairs === animals[currentLevel].length) {
+          gameActive = false;
+          setTimeout(showWinScreen, 500);
+        }
+        
+        flippedCards = [];
+      } else {
+        setTimeout(() => {
+          card1.classList.remove('flipped');
+          card2.classList.remove('flipped');
+          card1.classList.add('shake');
+          card2.classList.add('shake');
+          
+          setTimeout(() => {
+            card1.classList.remove('shake');
+            card2.classList.remove('shake');
+          }, 500);
+          
+          flippedCards = [];
+        }, 1000);
+      }
+    }
+
+    // Show win screen
+    function showWinScreen() {
+      finalMoves.textContent = moves;
+      finalScore.textContent = score;
+      createConfetti();
+      winModal.style.display = 'flex';
+    }
+
+    // Create confetti effect
+    function createConfetti() {
+      for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = `${Math.random() * 100}vw`;
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+        confetti.style.width = `${Math.random() * 10 + 5}px`;
+        confetti.style.height = `${Math.random() * 10 + 5}px`;
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => {
+          confetti.remove();
+        }, 3000);
+      }
+    }
+
+    // Change level
+    function changeLevel(level) {
+      currentLevel = level;
+      levelBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.level === level);
+      });
+      initGame();
+    }
+
+    // Event listeners
+    levelBtns.forEach(btn => {
+      btn.addEventListener('click', () => changeLevel(btn.dataset.level));
+    });
+
+    resetBtn.addEventListener('click', initGame);
+    
+    nextLevelBtn.addEventListener('click', () => {
+      winModal.style.display = 'none';
+      if (currentLevel === 'easy') changeLevel('medium');
+      else if (currentLevel === 'medium') changeLevel('hard');
+      else changeLevel('easy');
+    });
+    
+    playAgainBtn.addEventListener('click', () => {
+      winModal.style.display = 'none';
+      initGame();
+    });
+
+    // Start the game
+    initGame();
   </script>
 </body>
 </html>
+
