@@ -19,6 +19,7 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      flex-direction: column;
     }
 
     .card {
@@ -29,10 +30,13 @@
       text-align: center;
       width: 90%;
       max-width: 400px;
+      position: relative;
     }
 
     .ad {
-      margin: 20px auto;
+      margin: 10px auto;
+      display: block;
+      text-align: center;
     }
 
     h1 {
@@ -124,6 +128,12 @@
         font-size: 0.9rem;
         padding: 8px 16px;
       }
+
+      .ad {
+        margin: 20px auto;
+        width: 100%; /* Make the ad responsive */
+        max-width: 468px; /* Ensure max-width of the ad */
+      }
     }
   </style>
 </head>
@@ -131,7 +141,7 @@
   <div class="card">
     <h1>Tic Tac Toe Football</h1>
 
-    <!-- Top Ad 468x60 -->
+    <!-- Top 468x60 Ad -->
     <div class="ad" id="top-ad">
       <script type="text/javascript" src="https://udbaa.com/bnr.php?section=games&pub=225212&format=468x60&ga=g"></script>
       <noscript><a href="https://yllix.com/publishers/225212" target="_blank"><img src="//ylx-aff.advertica-cdn.com/pub/468x60.png" style="border:none;margin:0;padding:0;vertical-align:baseline;" alt="ylliX - Online Advertising Network" /></a></noscript>
@@ -153,7 +163,7 @@
     <button id="reset-button">Reset Game</button>
     <p data-player="X" id="status">Player X's Turn ⚽</p>
 
-    <!-- Bottom Ad 468x60 -->
+    <!-- Bottom 468x60 Ad -->
     <div class="ad" id="bottom-ad">
       <script type="text/javascript" src="https://udbaa.com/bnr.php?section=games&pub=225212&format=468x60&ga=g"></script>
       <noscript><a href="https://yllix.com/publishers/225212" target="_blank"><img src="//ylx-aff.advertica-cdn.com/pub/468x60.png" style="border:none;margin:0;padding:0;vertical-align:baseline;" alt="ylliX - Online Advertising Network" /></a></noscript>
