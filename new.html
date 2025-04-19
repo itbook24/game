@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: #111;
+        }
+        
+        .word {
+            position: absolute;
+            font-size: 24px;
+            color: white;
+            white-space: nowrap;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            transition: transform 0.1s;
+        }
+        
+        .word.active {
+            color: #ff0;
+            text-shadow: 0 0 10px #ff0;
+        }
+        
+        #input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        #score-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+        }
+        
+        #health-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #f00;
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: #f00;
+            display: none;
+            text-align: center;
+        }
+        
+        #start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 100;
+        }
+        
+        #start-button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            font-size: 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="health-display">Health: ❤❤❤</div>
+        <div id="score-display">Score: 0</div>
+        <input type="text" id="input" autofocus>
+        
+        <div id="game-over">
+            Game Over!<br>
+            <span id="final-score">Score: 0</span><br>
+            <button id="restart-button">Play Again</button>
+        </div>
+        
+        <div id="start-screen">
+            <h1>Typing Game</h1>
+            <p>Type the words before they reach the bottom</p>
+            <button id="start-button">Start Game</button>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        let score = 0;
+        let health = 3;
+        let gameSpeed = 1;
+        let gameActive = false;
+        let currentWord = '';
+        let activeWordElement = null;
+        let wordPool = [
+            "hello", "world", "javascript", "game", "typing", 
+            "developer", "keyboard", "computer", "programming",
+            "algorithm", "function", "variable", "array", "object",
+            "react", "angular", "vue", "node", "python", "java",
+            "html", "css", "website", "internet", "browser"
+        ];
+        
+        // DOM elements
+        const gameContainer = document.getElementById('game-container');
+        const input = document.getElementById('input');
+        const scoreDisplay = document.getElementById('score-display');
+        const healthDisplay = document.getElementById('health-display');
+        const gameOverScreen = document.getElementById('game-over');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const restartButton = document.getElementById('restart-button');
+        const startScreen = document.getElementById('start-screen');
+        const startButton = document.getElementById('start-button');
+        
+        // Event listeners
+        input.addEventListener('input', checkInput);
+        restartButton.addEventListener('click', restartGame);
+        startButton.addEventListener('click', startGame);
+        
+        // Game functions
+        function startGame() {
+            startScreen.style.display = 'none';
+            score = 0;
+            health = 3;
+            gameSpeed = 1;
+            gameActive = true;
+            updateDisplays();
+            spawnWord();
+            gameLoop();
+        }
+        
+        function gameLoop() {
+            if (!gameActive) return;
+            
+            // Increase difficulty over time
+            gameSpeed += 0.001;
+            
+            // Spawn new words randomly
+            if (Math.random() < 0.02 * gameSpeed) {
+                spawnWord();
+            }
+            
+            // Move all words down
+            const words = document.querySelectorAll('.word');
+            words.forEach(word => {
+                const currentTop = parseFloat(word.style.top) || 0;
+                const newTop = currentTop + 1 * gameSpeed;
+                word.style.top = newTop + 'px';
+                
+                // Check if word reached bottom
+                if (newTop > gameContainer.clientHeight - 30) {
+                    word.remove();
+                    decreaseHealth();
+                }
+            });
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function spawnWord() {
+            const wordElement = document.createElement('div');
+            wordElement.className = 'word';
+            
+            // Select random word
+            const word = wordPool[Math.floor(Math.random() * wordPool.length)];
+            wordElement.textContent = word;
+            
+            // Random horizontal position
+            const leftPos = Math.random() * (gameContainer.clientWidth - 100);
+            wordElement.style.left = leftPos + 'px';
+            wordElement.style.top = '0px';
+            
+            gameContainer.appendChild(wordElement);
+        }
+        
+        function checkInput(e) {
+            const typedText = e.target.value.toLowerCase();
+            
+            // Find matching word
+            const words = document.querySelectorAll('.word');
+            let foundMatch = false;
+            
+            words.forEach(word => {
+                const wordText = word.textContent.toLowerCase();
+                
+                if (wordText.startsWith(typedText)) {
+                    // Highlight partial match
+                    word.classList.add('active');
+                    activeWordElement = word;
+                    foundMatch = true;
+                    
+                    // Check for complete match
+                    if (wordText === typedText) {
+                        // Word completed
+                        word.remove();
+                        increaseScore(wordText.length);
+                        e.target.value = '';
+                        
+                        // Remove active class from any other words
+                        words.forEach(w => w.classList.remove('active'));
+                    }
+                } else {
+                    word.classList.remove('active');
+                }
+            });
+            
+            if (!foundMatch && activeWordElement) {
+                activeWordElement.classList.remove('active');
+                activeWordElement = null;
+            }
+            
+            // Clear input if no match at all
+            if (!foundMatch && typedText.length > 0) {
+                e.target.value = '';
+            }
+        }
+        
+        function increaseScore(points) {
+            score += points * Math.floor(gameSpeed);
+            updateDisplays();
+        }
+        
+        function decreaseHealth() {
+            health--;
+            updateDisplays();
+            
+            if (health <= 0) {
+                endGame();
+            }
+        }
+        
+        function updateDisplays() {
+            scoreDisplay.textContent = `Score: ${score}`;
+            
+            // Update health display
+            let hearts = '';
+            for (let i = 0; i < 3; i++) {
+                hearts += i < health ? '❤' : '♡';
+            }
+            healthDisplay.innerHTML = `Health: ${hearts}`;
+        }
+        
+        function endGame() {
+            gameActive = false;
+            finalScoreDisplay.textContent = `Score: ${score}`;
+            gameOverScreen.style.display = 'block';
+            
+            // Clear all words
+            document.querySelectorAll('.word').forEach(word => word.remove());
+        }
+        
+        function restartGame() {
+            gameOverScreen.style.display = 'none';
+            startGame();
+        }
+    </script>
+</body>
+</html>
