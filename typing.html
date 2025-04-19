@@ -3,15 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing Game</title>
+    <title>Cosmic Typing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #6e45e2;
+            --secondary: #88d3ce;
+            --accent: #ff7e5f;
+            --bg-dark: #0f0c29;
+            --bg-light: #302b63;
+            --text-light: #ffffff;
+            --text-dim: #aaaaaa;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #222;
-            color: white;
+            font-family: 'Roboto Mono', monospace;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-light));
+            color: var(--text-light);
             overflow: hidden;
+            height: 100vh;
             user-select: none;
         }
         
@@ -19,21 +37,59 @@
             position: relative;
             width: 100vw;
             height: 100vh;
-            background-color: #111;
+            overflow: hidden;
+        }
+        
+        #stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            100% { opacity: 1; }
         }
         
         .word {
             position: absolute;
-            font-size: 24px;
-            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-light);
             white-space: nowrap;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-            transition: transform 0.1s;
+            text-shadow: 0 0 10px rgba(110, 69, 226, 0.7);
+            transition: all 0.2s ease;
+            z-index: 10;
+            padding: 5px 15px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .word.active {
-            color: #ff0;
-            text-shadow: 0 0 10px #ff0;
+            color: var(--accent);
+            text-shadow: 0 0 15px var(--accent);
+            background: rgba(255, 126, 95, 0.2);
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+        
+        .word.correct {
+            animation: explode 0.5s forwards;
+        }
+        
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
         }
         
         #input {
@@ -42,30 +98,126 @@
             pointer-events: none;
         }
         
-        #score-display {
+        #hud {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 100;
+        }
+        
+        .hud-panel {
+            background: rgba(15, 12, 41, 0.7);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         #health-display {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 24px;
-            color: #f00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        #game-over {
+        .heart {
+            color: var(--accent);
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .heart.lost {
+            color: var(--text-dim);
+            transform: scale(0.8);
+        }
+        
+        #score-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        #level-display {
+            font-size: 24px;
+            color: var(--primary);
+        }
+        
+        #combo-display {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 48px;
-            color: #f00;
-            display: none;
-            text-align: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent);
+            opacity: 0;
+            z-index: 50;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 12, 41, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        
+        #game-over.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        #game-over h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 72px;
+            color: var(--accent);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--accent);
+        }
+        
+        #final-score {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--bg-light));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
         }
         
         #start-screen {
@@ -78,38 +230,109 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: rgba(0,0,0,0.8);
-            z-index: 100;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-light));
+            z-index: 300;
         }
         
-        #start-button {
-            margin-top: 20px;
-            padding: 10px 30px;
+        #title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 82px;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(110, 69, 226, 0.5);
+        }
+        
+        #subtitle {
             font-size: 24px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            color: var(--text-dim);
+            margin-bottom: 50px;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        #instructions {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-dim);
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        #typing-cursor {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse 1s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        #particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
     <div id="game-container">
-        <div id="health-display">Health: ❤❤❤</div>
-        <div id="score-display">Score: 0</div>
+        <div id="stars"></div>
+        <div id="particles"></div>
+        
+        <div id="hud">
+            <div class="hud-panel" id="health-display">
+                <span class="heart">❤</span>
+                <span class="heart">❤</span>
+                <span class="heart">❤</span>
+            </div>
+            <div class="hud-panel" id="score-display">Score: 0</div>
+            <div class="hud-panel" id="level-display">Level: 1</div>
+        </div>
+        
+        <div id="combo-display"></div>
+        
         <input type="text" id="input" autofocus>
         
         <div id="game-over">
-            Game Over!<br>
-            <span id="final-score">Score: 0</span><br>
-            <button id="restart-button">Play Again</button>
+            <h2>GAME OVER</h2>
+            <div id="final-score">Score: 0</div>
+            <button class="btn" id="restart-button">Play Again</button>
+            <button class="btn" id="menu-button">Main Menu</button>
         </div>
         
         <div id="start-screen">
-            <h1>Typing Game</h1>
-            <p>Type the words before they reach the bottom</p>
-            <button id="start-button">Start Game</button>
+            <h1 id="title">COSMIC TYPING</h1>
+            <p id="subtitle">Destroy incoming words by typing them before they reach the bottom of the screen</p>
+            <button class="btn" id="start-button">START GAME</button>
+            <div id="typing-cursor"></div>
+            <div id="instructions">
+                Use your keyboard to type the words<br>
+                The game gets faster as you progress
+            </div>
         </div>
     </div>
 
@@ -117,32 +340,129 @@
         // Game variables
         let score = 0;
         let health = 3;
+        let level = 1;
         let gameSpeed = 1;
         let gameActive = false;
+        let combo = 0;
+        let maxCombo = 0;
+        let wordsDestroyed = 0;
         let currentWord = '';
         let activeWordElement = null;
-        let wordPool = [
-            "hello", "world", "javascript", "game", "typing", 
-            "developer", "keyboard", "computer", "programming",
-            "algorithm", "function", "variable", "array", "object",
-            "react", "angular", "vue", "node", "python", "java",
-            "html", "css", "website", "internet", "browser"
-        ];
+        
+        // Word pools by difficulty
+        const wordPools = {
+            easy: [
+                "hello", "world", "game", "type", "code", "web", "fun", "key", "board", "mouse",
+                "screen", "click", "text", "word", "fast", "slow", "high", "low", "play", "stop"
+            ],
+            medium: [
+                "javascript", "developer", "keyboard", "computer", "program", "algorithm", 
+                "function", "variable", "browser", "network", "internet", "website", 
+                "monitor", "console", "command", "digital", "analog", "binary", "python", "java"
+            ],
+            hard: [
+                "asynchronous", "recursive", "declarative", "imperative", "object oriented",
+                "functional", "inheritance", "polymorphism", "encapsulation", "abstraction",
+                "regular expression", "callback", "promise", "framework", "library",
+                "compiler", "interpreter", "debugging", "optimization", "refactoring"
+            ]
+        };
         
         // DOM elements
         const gameContainer = document.getElementById('game-container');
+        const starsContainer = document.getElementById('stars');
+        const particlesContainer = document.getElementById('particles');
         const input = document.getElementById('input');
         const scoreDisplay = document.getElementById('score-display');
         const healthDisplay = document.getElementById('health-display');
+        const levelDisplay = document.getElementById('level-display');
+        const comboDisplay = document.getElementById('combo-display');
         const gameOverScreen = document.getElementById('game-over');
         const finalScoreDisplay = document.getElementById('final-score');
         const restartButton = document.getElementById('restart-button');
+        const menuButton = document.getElementById('menu-button');
         const startScreen = document.getElementById('start-screen');
         const startButton = document.getElementById('start-button');
+        
+        // Create stars background
+        function createStars() {
+            const starCount = 200;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random position
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Random size
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random animation delay
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Create particle effect
+        function createParticles(x, y, color, count = 20) {
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Set color
+                particle.style.backgroundColor = color || getRandomColor();
+                
+                // Random size
+                const size = Math.random() * 8 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Position at explosion point
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                
+                // Random velocity
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 5 + 2;
+                const lifetime = Math.random() * 1000 + 500;
+                
+                particlesContainer.appendChild(particle);
+                
+                // Animate particle
+                let startTime = Date.now();
+                const animate = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = elapsed / lifetime;
+                    
+                    if (progress >= 1) {
+                        particle.remove();
+                        return;
+                    }
+                    
+                    const distance = velocity * elapsed / 20;
+                    particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                    particle.style.opacity = 1 - progress;
+                    
+                    requestAnimationFrame(animate);
+                };
+                
+                animate();
+            }
+        }
+        
+        function getRandomColor() {
+            const colors = ['#6e45e2', '#88d3ce', '#ff7e5f', '#b84592', '#2ebf91'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
         
         // Event listeners
         input.addEventListener('input', checkInput);
         restartButton.addEventListener('click', restartGame);
+        menuButton.addEventListener('click', returnToMenu);
         startButton.addEventListener('click', startGame);
         
         // Game functions
@@ -150,11 +470,19 @@
             startScreen.style.display = 'none';
             score = 0;
             health = 3;
+            level = 1;
             gameSpeed = 1;
+            combo = 0;
+            maxCombo = 0;
+            wordsDestroyed = 0;
             gameActive = true;
+            
             updateDisplays();
             spawnWord();
             gameLoop();
+            
+            // Focus input for typing
+            input.focus();
         }
         
         function gameLoop() {
@@ -162,6 +490,14 @@
             
             // Increase difficulty over time
             gameSpeed += 0.001;
+            
+            // Check for level up
+            const newLevel = Math.floor(wordsDestroyed / 20) + 1;
+            if (newLevel > level) {
+                level = newLevel;
+                updateDisplays();
+                showCombo("LEVEL UP!");
+            }
             
             // Spawn new words randomly
             if (Math.random() < 0.02 * gameSpeed) {
@@ -189,14 +525,19 @@
             const wordElement = document.createElement('div');
             wordElement.className = 'word';
             
-            // Select random word
-            const word = wordPool[Math.floor(Math.random() * wordPool.length)];
+            // Select random word based on level
+            let pool;
+            if (level < 3) pool = wordPools.easy;
+            else if (level < 6) pool = [...wordPools.easy, ...wordPools.medium];
+            else pool = [...wordPools.easy, ...wordPools.medium, ...wordPools.hard];
+            
+            const word = pool[Math.floor(Math.random() * pool.length)];
             wordElement.textContent = word;
             
             // Random horizontal position
-            const leftPos = Math.random() * (gameContainer.clientWidth - 100);
+            const leftPos = Math.random() * (gameContainer.clientWidth - 200) + 50;
             wordElement.style.left = leftPos + 'px';
-            wordElement.style.top = '0px';
+            wordElement.style.top = '-50px';
             
             gameContainer.appendChild(wordElement);
         }
@@ -220,8 +561,19 @@
                     // Check for complete match
                     if (wordText === typedText) {
                         // Word completed
-                        word.remove();
+                        word.classList.add('correct');
+                        createParticles(
+                            word.offsetLeft + word.offsetWidth / 2,
+                            word.offsetTop + word.offsetHeight / 2,
+                            '#ff7e5f'
+                        );
+                        
+                        setTimeout(() => {
+                            word.remove();
+                        }, 500);
+                        
                         increaseScore(wordText.length);
+                        increaseCombo();
                         e.target.value = '';
                         
                         // Remove active class from any other words
@@ -240,17 +592,55 @@
             // Clear input if no match at all
             if (!foundMatch && typedText.length > 0) {
                 e.target.value = '';
+                resetCombo();
             }
         }
         
         function increaseScore(points) {
-            score += points * Math.floor(gameSpeed);
+            wordsDestroyed++;
+            const multiplier = 1 + (combo * 0.1);
+            score += Math.floor(points * gameSpeed * multiplier);
             updateDisplays();
+        }
+        
+        function increaseCombo() {
+            combo++;
+            if (combo > maxCombo) maxCombo = combo;
+            
+            if (combo > 3) {
+                showCombo(`${combo} COMBO!`);
+            }
+        }
+        
+        function resetCombo() {
+            if (combo > 3) {
+                showCombo('COMBO BROKEN!', '#ff0000');
+            }
+            combo = 0;
+        }
+        
+        function showCombo(text, color = '#ff7e5f') {
+            comboDisplay.textContent = text;
+            comboDisplay.style.color = color;
+            comboDisplay.style.textShadow = `0 0 20px ${color}`;
+            comboDisplay.style.opacity = 1;
+            
+            setTimeout(() => {
+                comboDisplay.style.opacity = 0;
+            }, 1000);
         }
         
         function decreaseHealth() {
             health--;
             updateDisplays();
+            
+            // Update heart display
+            const hearts = healthDisplay.querySelectorAll('.heart');
+            hearts.forEach((heart, index) => {
+                if (index >= health) {
+                    heart.classList.add('lost');
+                }
+            });
             
             if (health <= 0) {
                 endGame();
@@ -259,28 +649,35 @@
         
         function updateDisplays() {
             scoreDisplay.textContent = `Score: ${score}`;
-            
-            // Update health display
-            let hearts = '';
-            for (let i = 0; i < 3; i++) {
-                hearts += i < health ? '❤' : '♡';
-            }
-            healthDisplay.innerHTML = `Health: ${hearts}`;
+            levelDisplay.textContent = `Level: ${level}`;
         }
         
         function endGame() {
             gameActive = false;
-            finalScoreDisplay.textContent = `Score: ${score}`;
-            gameOverScreen.style.display = 'block';
+            finalScoreDisplay.textContent = `Score: ${score} (Max Combo: ${maxCombo})`;
+            gameOverScreen.classList.add('show');
             
             // Clear all words
             document.querySelectorAll('.word').forEach(word => word.remove());
         }
         
         function restartGame() {
-            gameOverScreen.style.display = 'none';
+            gameOverScreen.classList.remove('show');
+            
+            // Reset hearts display
+            const hearts = healthDisplay.querySelectorAll('.heart');
+            hearts.forEach(heart => heart.classList.remove('lost'));
+            
             startGame();
         }
+        
+        function returnToMenu() {
+            gameOverScreen.classList.remove('show');
+            startScreen.style.display = 'flex';
+        }
+        
+        // Initialize
+        createStars();
     </script>
 </body>
 </html>
