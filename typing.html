@@ -489,7 +489,7 @@
             if (!gameActive) return;
             
             // Increase difficulty over time
-            gameSpeed += 0.008;
+            gameSpeed += 0.015;
             
             // Check for level up
             const newLevel = Math.floor(wordsDestroyed / 20) + 1;
@@ -500,7 +500,7 @@
             }
             
             // Spawn new words randomly
-            if (Math.random() < 0.02 * gameSpeed) {
+            if (Math.random() < 0.002 * gameSpeed) {
                 spawnWord();
             }
             
