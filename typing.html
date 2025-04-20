@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Typing</title>
+    <title>Typing speed game</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -26,44 +26,19 @@
             margin: 0;
             padding: 0;
             font-family: 'Roboto Mono', monospace;
-            background: #000;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-light));
             color: var(--text-light);
             overflow: hidden;
             height: 100vh;
             user-select: none;
             padding-top: 90px; /* Space for top ad */
-            touch-action: manipulation;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        #game-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 900px; /* 3:4 ratio base */
-            max-height: 1200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         
         #game-container {
             position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 133.33%; /* 3:4 aspect ratio */
-            background: linear-gradient(135deg, var(--bg-dark), var(--bg-light));
+            width: 100vw;
+            height: calc(100vh - 90px); /* Adjusted for top ad */
             overflow: hidden;
-        }
-        
-        #game-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
         }
         
         #stars {
@@ -87,7 +62,7 @@
         
         .word {
             position: absolute;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--text-light);
             white-space: nowrap;
@@ -129,7 +104,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 10px;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             z-index: 100;
@@ -139,21 +114,20 @@
             background: rgba(15, 12, 41, 0.7);
             backdrop-filter: blur(5px);
             border-radius: 10px;
-            padding: 10px 15px;
+            padding: 15px 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 16px;
         }
         
         #health-display {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         
         .heart {
             color: var(--accent);
-            font-size: 20px;
+            font-size: 24px;
             transition: all 0.3s ease;
         }
         
@@ -163,11 +137,13 @@
         }
         
         #score-display {
+            font-size: 24px;
             font-weight: bold;
             color: var(--secondary);
         }
         
         #level-display {
+            font-size: 24px;
             color: var(--primary);
         }
         
@@ -176,7 +152,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 48px;
+            font-size: 60px;
             font-weight: bold;
             color: var(--accent);
             text-shadow: 0 0 20px var(--accent);
@@ -211,14 +187,14 @@
         
         #game-over h2 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 48px;
+            font-size: 72px;
             color: var(--accent);
             margin-bottom: 20px;
             text-shadow: 0 0 20px var(--accent);
         }
         
         #final-score {
-            font-size: 24px;
+            font-size: 36px;
             margin-bottom: 30px;
         }
         
@@ -226,8 +202,8 @@
             background: linear-gradient(135deg, var(--primary), var(--bg-light));
             color: white;
             border: none;
-            padding: 12px 30px;
-            font-size: 16px;
+            padding: 15px 40px;
+            font-size: 18px;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
@@ -257,13 +233,11 @@
             align-items: center;
             background: linear-gradient(135deg, var(--bg-dark), var(--bg-light));
             z-index: 300;
-            padding: 20px;
-            text-align: center;
         }
         
         #title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 48px;
+            font-size: 82px;
             margin-bottom: 20px;
             background: linear-gradient(to right, var(--secondary), var(--primary));
             -webkit-background-clip: text;
@@ -273,23 +247,22 @@
         }
         
         #subtitle {
-            font-size: 18px;
+            font-size: 24px;
             color: var(--text-dim);
-            margin-bottom: 30px;
-            max-width: 100%;
+            margin-bottom: 50px;
+            max-width: 600px;
+            text-align: center;
             line-height: 1.5;
         }
         
         #instructions {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             color: var(--text-dim);
-            font-size: 14px;
+            font-size: 16px;
             text-align: center;
-            width: 100%;
-            padding: 0 20px;
         }
         
         #typing-cursor {
@@ -297,7 +270,7 @@
             bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
-            width: 200px;
+            width: 300px;
             height: 4px;
             background: var(--accent);
             border-radius: 2px;
@@ -325,182 +298,40 @@
             pointer-events: none;
         }
 
-        /* Mobile Keyboard Styles */
-        #mobile-keyboard {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(30, 30, 60, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 8px;
-            display: none;
-            z-index: 400;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .keyboard-row {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 6px;
-        }
-
-        .keyboard-key {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            padding: 10px 0;
-            margin: 0 2px;
-            font-size: 16px;
-            min-width: 8%;
-            text-align: center;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.1s ease;
-        }
-
-        .keyboard-key:active {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(0.95);
-        }
-
-        .keyboard-key.space {
-            min-width: 50%;
-        }
-
-        .keyboard-key.backspace {
-            min-width: 12%;
-            font-size: 14px;
-        }
-
-        /* Game Center Options */
-        #game-center {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 500;
-        }
-
-        #game-center-btn {
-            background: rgba(15, 12, 41, 0.7);
-            color: var(--text-light);
-            border: none;
-            border-radius: 50px;
-            padding: 8px 15px;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        #game-center-btn:hover {
-            background: rgba(110, 69, 226, 0.5);
-        }
-
-        #game-center-menu {
-            position: absolute;
-            top: 40px;
-            right: 0;
-            background: rgba(15, 12, 41, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
-            padding: 12px;
-            width: 160px;
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        #game-center-menu.show {
-            display: flex;
-        }
-
-        .game-center-option {
-            background: transparent;
-            color: var(--text-light);
-            border: none;
-            padding: 8px;
-            border-radius: 5px;
-            text-align: left;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .game-center-option:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        @media (max-width: 768px) {
-            #mobile-keyboard {
-                display: block;
+        /* New aspect ratio enforcement - added without modifying existing code */
+        @media (min-aspect-ratio: 4/3) {
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #000 !important;
+                padding-top: 0 !important;
             }
             
-            .word {
-                font-size: 18px;
-            }
-            
-            #title {
-                font-size: 36px;
-            }
-            
-            #subtitle {
-                font-size: 16px;
-                margin-bottom: 20px;
-            }
-            
-            .btn {
-                padding: 10px 25px;
-                font-size: 14px;
-            }
-            
-            #hud {
-                padding: 8px;
-            }
-            
-            .hud-panel {
-                padding: 6px 10px;
-                font-size: 14px;
-            }
-
-            #game-center {
-                top: 8px;
-                right: 8px;
-            }
-
-            #game-center-btn {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-
-            #game-center-menu {
-                width: 140px;
-                padding: 10px;
-            }
-
-            .game-center-option {
-                font-size: 12px;
-                padding: 6px;
-            }
-            
-            #game-over h2 {
-                font-size: 36px;
-            }
-            
-            #final-score {
-                font-size: 20px;
+            #game-container {
+                width: calc(100vh * 4 / 3) !important;
+                height: 100vh !important;
+                max-width: 100vw;
+                transform-origin: center;
+                transform: scale(calc(100vw / (100vh * 4 / 3)));
             }
         }
-
-        @media (min-width: 1200px) {
-            #game-wrapper {
-                max-width: 900px;
-                max-height: 1200px;
+        
+        @media (max-aspect-ratio: 4/3) {
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #000 !important;
+                padding-top: 0 !important;
+            }
+            
+            #game-container {
+                width: 100vw !important;
+                height: calc(100vw * 3 / 4) !important;
+                max-height: 100vh;
+                transform-origin: center;
+                transform: scale(calc(100vh / (100vw * 3 / 4)));
             }
         }
     </style>
@@ -512,97 +343,40 @@
 <noscript><a href="https://yllix.com/publishers/225212" target="_blank"><img src="//ylx-aff.advertica-cdn.com/pub/728x90.png" style="border:none;margin:0;padding:0;vertical-align:baseline;" alt="ylliX - Online Advertising Network" /></a></noscript>
     </div>
 
-    <div id="game-wrapper">
-        <div id="game-container">
-            <div id="game-content">
-                <div id="stars"></div>
-                <div id="particles"></div>
-                
-                <div id="hud">
-                    <div class="hud-panel" id="health-display">
-                        <span class="heart">❤</span>
-                        <span class="heart">❤</span>
-                        <span class="heart">❤</span>
-                    </div>
-                    <div class="hud-panel" id="score-display">Score: 0</div>
-                    <div class="hud-panel" id="level-display">Level: 1</div>
-                </div>
-                
-                <div id="combo-display"></div>
-                
-                <input type="text" id="input" autofocus>
-                
-                <div id="game-over">
-                    <h2>GAME OVER</h2>
-                    <div id="final-score">Score: 0</div>
-                    <button class="btn" id="restart-button">Play Again</button>
-                    <button class="btn" id="menu-button">Main Menu</button>
-                </div>
-                
-                <div id="start-screen">
-                    <h1 id="title">COSMIC TYPING</h1>
-                    <p id="subtitle">Destroy incoming words by typing them before they reach the bottom of the screen</p>
-                    <button class="btn" id="start-button">START GAME</button>
-                    <div id="typing-cursor"></div>
-                    <div id="instructions">
-                        Use your keyboard to type the words<br>
-                        The game gets faster as you progress
-                    </div>
-                </div>
-
-                <!-- Game Center Button -->
-                <div id="game-center">
-                    <button id="game-center-btn">
-                        <span>Game Center</span>
-                    </button>
-                    <div id="game-center-menu">
-                        <button class="game-center-option" id="pause-btn">Pause Game</button>
-                        <button class="game-center-option" id="sound-btn">Sound: On</button>
-                        <button class="game-center-option" id="help-btn">Help</button>
-                        <button class="game-center-option" id="about-btn">About</button>
-                    </div>
-                </div>
+    <div id="game-container">
+        <div id="stars"></div>
+        <div id="particles"></div>
+        
+        <div id="hud">
+            <div class="hud-panel" id="health-display">
+                <span class="heart">❤</span>
+                <span class="heart">❤</span>
+                <span class="heart">❤</span>
             </div>
+            <div class="hud-panel" id="score-display">Score: 0</div>
+            <div class="hud-panel" id="level-display">Level: 1</div>
         </div>
-    </div>
-
-    <!-- Mobile Keyboard -->
-    <div id="mobile-keyboard">
-        <div class="keyboard-row">
-            <div class="keyboard-key" data-key="q">q</div>
-            <div class="keyboard-key" data-key="w">w</div>
-            <div class="keyboard-key" data-key="e">e</div>
-            <div class="keyboard-key" data-key="r">r</div>
-            <div class="keyboard-key" data-key="t">t</div>
-            <div class="keyboard-key" data-key="y">y</div>
-            <div class="keyboard-key" data-key="u">u</div>
-            <div class="keyboard-key" data-key="i">i</div>
-            <div class="keyboard-key" data-key="o">o</div>
-            <div class="keyboard-key" data-key="p">p</div>
+        
+        <div id="combo-display"></div>
+        
+        <input type="text" id="input" autofocus>
+        
+        <div id="game-over">
+            <h2>GAME OVER</h2>
+            <div id="final-score">Score: 0</div>
+            <button class="btn" id="restart-button">Play Again</button>
+            <button class="btn" id="menu-button">Main Menu</button>
         </div>
-        <div class="keyboard-row">
-            <div class="keyboard-key" data-key="a">a</div>
-            <div class="keyboard-key" data-key="s">s</div>
-            <div class="keyboard-key" data-key="d">d</div>
-            <div class="keyboard-key" data-key="f">f</div>
-            <div class="keyboard-key" data-key="g">g</div>
-            <div class="keyboard-key" data-key="h">h</div>
-            <div class="keyboard-key" data-key="j">j</div>
-            <div class="keyboard-key" data-key="k">k</div>
-            <div class="keyboard-key" data-key="l">l</div>
-        </div>
-        <div class="keyboard-row">
-            <div class="keyboard-key" data-key="z">z</div>
-            <div class="keyboard-key" data-key="x">x</div>
-            <div class="keyboard-key" data-key="c">c</div>
-            <div class="keyboard-key" data-key="v">v</div>
-            <div class="keyboard-key" data-key="b">b</div>
-            <div class="keyboard-key" data-key="n">n</div>
-            <div class="keyboard-key" data-key="m">m</div>
-            <div class="keyboard-key backspace" data-key="Backspace">⌫</div>
-        </div>
-        <div class="keyboard-row">
-            <div class="keyboard-key space" data-key=" ">Space</div>
+        
+        <div id="start-screen">
+            <h1 id="title">COSMIC TYPING</h1>
+            <p id="subtitle">Destroy incoming words by typing them before they reach the bottom of the screen</p>
+            <button class="btn" id="start-button">START GAME</button>
+            <div id="typing-cursor"></div>
+            <div id="instructions">
+                Use your keyboard to type the words<br>
+                The game gets faster as you progress
+            </div>
         </div>
     </div>
 
@@ -613,18 +387,17 @@
         let level = 1;
         let gameSpeed = 1;
         let gameActive = false;
-        let gamePaused = false;
         let combo = 0;
         let maxCombo = 0;
         let wordsDestroyed = 0;
         let currentWord = '';
         let activeWordElement = null;
-        let soundEnabled = true;
         
         // Word pools by difficulty
         const wordPools = {
             easy: [
                 "hello", "world", "game", "type", "code", "web", "fun", "key", "board", "mouse", "Free Palestine"
+                
             ],
             medium: [
                 "javascript", "developer", "keyboard", "computer", "program", "algorithm", 
@@ -637,9 +410,7 @@
         };
         
         // DOM elements
-        const gameWrapper = document.getElementById('game-wrapper');
         const gameContainer = document.getElementById('game-container');
-        const gameContent = document.getElementById('game-content');
         const starsContainer = document.getElementById('stars');
         const particlesContainer = document.getElementById('particles');
         const input = document.getElementById('input');
@@ -653,14 +424,6 @@
         const menuButton = document.getElementById('menu-button');
         const startScreen = document.getElementById('start-screen');
         const startButton = document.getElementById('start-button');
-        const mobileKeyboard = document.getElementById('mobile-keyboard');
-        const keyboardKeys = document.querySelectorAll('.keyboard-key');
-        const gameCenterBtn = document.getElementById('game-center-btn');
-        const gameCenterMenu = document.getElementById('game-center-menu');
-        const pauseBtn = document.getElementById('pause-btn');
-        const soundBtn = document.getElementById('sound-btn');
-        const helpBtn = document.getElementById('help-btn');
-        const aboutBtn = document.getElementById('about-btn');
         
         // Create stars background
         function createStars() {
@@ -737,95 +500,11 @@
             return colors[Math.floor(Math.random() * colors.length)];
         }
         
-        // Mobile keyboard input handler
-        function handleKeyboardKeyPress(key) {
-            if (!gameActive || gamePaused) return;
-            
-            if (key === 'Backspace') {
-                input.value = input.value.slice(0, -1);
-            } else if (key === ' ') {
-                input.value += ' ';
-            } else {
-                input.value += key;
-            }
-            
-            // Trigger input event manually
-            const event = new Event('input', { bubbles: true });
-            input.dispatchEvent(event);
-            
-            // Keep focus on input
-            input.focus();
-        }
-        
         // Event listeners
         input.addEventListener('input', checkInput);
         restartButton.addEventListener('click', restartGame);
         menuButton.addEventListener('click', returnToMenu);
         startButton.addEventListener('click', startGame);
-        
-        // Add event listeners to mobile keyboard keys
-        keyboardKeys.forEach(key => {
-            key.addEventListener('click', () => {
-                const keyValue = key.getAttribute('data-key');
-                handleKeyboardKeyPress(keyValue);
-            });
-            
-            // Add touch feedback
-            key.addEventListener('touchstart', () => {
-                key.classList.add('active');
-            });
-            
-            key.addEventListener('touchend', () => {
-                key.classList.remove('active');
-            });
-        });
-        
-        // Game center event listeners
-        gameCenterBtn.addEventListener('click', () => {
-            gameCenterMenu.classList.toggle('show');
-        });
-        
-        pauseBtn.addEventListener('click', togglePause);
-        soundBtn.addEventListener('click', toggleSound);
-        helpBtn.addEventListener('click', showHelp);
-        aboutBtn.addEventListener('click', showAbout);
-        
-        // Close game center menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!gameCenterBtn.contains(e.target) && !gameCenterMenu.contains(e.target)) {
-                gameCenterMenu.classList.remove('show');
-            }
-        });
-        
-        // Game center functions
-        function togglePause() {
-            gamePaused = !gamePaused;
-            pauseBtn.textContent = gamePaused ? 'Resume Game' : 'Pause Game';
-            gameCenterMenu.classList.remove('show');
-            
-            if (gamePaused) {
-                // Show pause overlay
-            } else {
-                // Hide pause overlay
-                input.focus();
-            }
-        }
-        
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            soundBtn.textContent = `Sound: ${soundEnabled ? 'On' : 'Off'}`;
-            gameCenterMenu.classList.remove('show');
-        }
-        
-        function showHelp() {
-            gameCenterMenu.classList.remove('show');
-            alert("How to play:\n\n- Type the words before they reach the bottom\n- The game gets faster as you progress\n- Longer words give more points\n- Combos multiply your score");
-        }
-        
-        function showAbout() {
-            gameCenterMenu.classList.remove('show');
-            alert("Cosmic Typing\n\nA typing game with cosmic theme\n\nCreated with HTML, CSS and JavaScript");
-        }
         
         // Game functions
         function startGame() {
@@ -838,7 +517,6 @@
             maxCombo = 0;
             wordsDestroyed = 0;
             gameActive = true;
-            gamePaused = false;
             
             updateDisplays();
             spawnWord();
@@ -849,10 +527,7 @@
         }
         
         function gameLoop() {
-            if (!gameActive || gamePaused) {
-                requestAnimationFrame(gameLoop);
-                return;
-            }
+            if (!gameActive) return;
             
             // Increase difficulty over time (slower increase)
             gameSpeed += 0.00009;
@@ -878,7 +553,7 @@
                 word.style.top = newTop + 'px';
                 
                 // Check if word reached bottom
-                if (newTop > gameContent.clientHeight - 30) {
+                if (newTop > gameContainer.clientHeight - 30) {
                     word.remove();
                     decreaseHealth();
                 }
@@ -901,16 +576,14 @@
             wordElement.textContent = word;
             
             // Random horizontal position
-            const leftPos = Math.random() * (gameContent.clientWidth - 200) + 50;
+            const leftPos = Math.random() * (gameContainer.clientWidth - 200) + 50;
             wordElement.style.left = leftPos + 'px';
             wordElement.style.top = '-50px';
             
-            gameContent.appendChild(wordElement);
+            gameContainer.appendChild(wordElement);
         }
         
         function checkInput(e) {
-            if (gamePaused) return;
-            
             const typedText = e.target.value.toLowerCase();
             
             // Find matching word
@@ -1046,32 +719,6 @@
         
         // Initialize
         createStars();
-        
-        // Check if mobile device and adjust game container height
-        function checkIfMobile() {
-            if (window.innerWidth <= 768) {
-                // On mobile, we'll use full width and adjust height
-                const viewportWidth = window.innerWidth;
-                const desiredHeight = Math.floor(viewportWidth * (4/3));
-                
-                gameContainer.style.width = '100%';
-                gameContainer.style.paddingBottom = '133.33%'; // Maintain 3:4 aspect ratio
-                
-                // Adjust keyboard position
-                document.body.style.paddingBottom = '180px';
-            } else {
-                // On desktop, center the game with max dimensions
-                const viewportHeight = window.innerHeight - 90; // Subtract ad banner height
-                const maxWidth = Math.floor(viewportHeight * (3/4));
-                
-                gameWrapper.style.maxWidth = `${maxWidth}px`;
-                gameWrapper.style.maxHeight = `${viewportHeight}px`;
-                document.body.style.paddingBottom = '0';
-            }
-        }
-        
-        window.addEventListener('resize', checkIfMobile);
-        checkIfMobile();
     </script>
 </body>
 </html>
