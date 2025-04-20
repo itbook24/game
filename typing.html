@@ -31,12 +31,13 @@
             overflow: hidden;
             height: 100vh;
             user-select: none;
+            padding-top: 90px; /* Space for top ad */
         }
         
         #game-container {
             position: relative;
             width: 100vw;
-            height: 100vh;
+            height: calc(100vh - 90px); /* Adjusted for top ad */
             overflow: hidden;
         }
         
@@ -299,6 +300,12 @@
     </style>
 </head>
 <body>
+    <!-- Top Ad Banner -->
+    <div style="position: fixed; top: 0; left: 0; width: 100%; text-align: center; background: rgba(0,0,0,0.7); z-index: 1000;">
+       <script type="text/javascript" src="https://udbaa.com/bnr.php?section=General&pub=225212&format=728x90&ga=g"></script>
+<noscript><a href="https://yllix.com/publishers/225212" target="_blank"><img src="//ylx-aff.advertica-cdn.com/pub/728x90.png" style="border:none;margin:0;padding:0;vertical-align:baseline;" alt="ylliX - Online Advertising Network" /></a></noscript>
+    </div>
+
     <div id="game-container">
         <div id="stars"></div>
         <div id="particles"></div>
@@ -352,18 +359,16 @@
         // Word pools by difficulty
         const wordPools = {
             easy: [
-                "hello", "world", "game", "type", "code", "web", "fun", "key", "board", "mouse",
-                "screen", "click", "text", "word", "fast", "slow", "high", "low", "play", "stop"
+                "hello", "world", "game", "type", "code", "web", "fun", "key", "board", "mouse"
+                
             ],
             medium: [
                 "javascript", "developer", "keyboard", "computer", "program", "algorithm", 
-                "function", "variable", "browser", "network", "internet", "website", 
-                "monitor", "console", "command", "digital", "analog", "binary", "python", "java"
+                "function", "variable", "browser", "network", "internet", "website"
             ],
             hard: [
                 "asynchronous", "recursive", "declarative", "imperative", "object oriented",
                 "functional", "inheritance", "polymorphism", "encapsulation", "abstraction",
-                "regular expression", "callback", "promise", "framework", "library",
                 "compiler", "interpreter", "debugging", "optimization", "refactoring"
             ]
         };
@@ -679,21 +684,5 @@
         // Initialize
         createStars();
     </script>
-
-    <!-- Ad Code Section - Add your ad code below this line -->
-    <div style="position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; padding: 10px; background: rgba(0,0,0,0.5); z-index: 1000;">
-        <!-- Example AdSense code - replace with your actual ad code -->
-        <script type="text/javascript" src="https://udbaa.com/bnr.php?section=games&pub=225212&format=300x250&ga=g"></script>
-<noscript><a href="https://yllix.com/publishers/225212" target="_blank"><img src="//ylx-aff.advertica-cdn.com/pub/300x250.png" style="border:none;margin:0;padding:0;vertical-align:baseline;" alt="ylliX - Online Advertising Network" /></a></noscript>
-        <!-- Display Ad -->
-        <ins class="adsbygoogle"
-             style="display:inline-block;width:728px;height:90px"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="XXXXXXXXXX"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-    <!-- End of Ad Code Section -->
 </body>
 </html>
