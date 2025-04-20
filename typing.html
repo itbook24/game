@@ -298,8 +298,8 @@
             pointer-events: none;
         }
 
-        /* New aspect ratio enforcement - added without modifying existing code */
-        @media (min-aspect-ratio: 4/3) {
+        /* New 2:3 aspect ratio enforcement - added without modifying existing code */
+        @media (min-aspect-ratio: 3/2) {
             body {
                 display: flex;
                 justify-content: center;
@@ -309,15 +309,15 @@
             }
             
             #game-container {
-                width: calc(100vh * 4 / 3) !important;
+                width: calc(100vh * 2 / 3) !important;
                 height: 100vh !important;
                 max-width: 100vw;
                 transform-origin: center;
-                transform: scale(calc(100vw / (100vh * 4 / 3)));
+                transform: scale(calc(100vw / (100vh * 2 / 3)));
             }
         }
         
-        @media (max-aspect-ratio: 4/3) {
+        @media (max-aspect-ratio: 3/2) {
             body {
                 display: flex;
                 justify-content: center;
@@ -328,10 +328,10 @@
             
             #game-container {
                 width: 100vw !important;
-                height: calc(100vw * 3 / 4) !important;
+                height: calc(100vw * 3 / 2) !important;
                 max-height: 100vh;
                 transform-origin: center;
-                transform: scale(calc(100vh / (100vw * 3 / 4)));
+                transform: scale(calc(100vh / (100vw * 3 / 2)));
             }
         }
     </style>
