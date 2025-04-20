@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing speed game</title>
+    <title>Cosmic Typing</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,6 +32,7 @@
             height: 100vh;
             user-select: none;
             padding-top: 90px; /* Space for top ad */
+            touch-action: manipulation;
         }
         
         #game-container {
@@ -297,6 +298,88 @@
             border-radius: 50%;
             pointer-events: none;
         }
+
+        /* Mobile Keyboard Styles */
+        #mobile-keyboard {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(30, 30, 60, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            display: none;
+            z-index: 400;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .keyboard-key {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 12px 0;
+            margin: 0 3px;
+            font-size: 18px;
+            min-width: 10%;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s ease;
+        }
+
+        .keyboard-key:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.95);
+        }
+
+        .keyboard-key.space {
+            min-width: 60%;
+        }
+
+        .keyboard-key.backspace {
+            min-width: 15%;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            #mobile-keyboard {
+                display: block;
+            }
+            
+            .word {
+                font-size: 22px;
+            }
+            
+            #title {
+                font-size: 48px;
+            }
+            
+            #subtitle {
+                font-size: 18px;
+                margin-bottom: 30px;
+            }
+            
+            .btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+            
+            #hud {
+                padding: 10px;
+            }
+            
+            .hud-panel {
+                padding: 8px 12px;
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -343,6 +426,46 @@
         </div>
     </div>
 
+    <!-- Mobile Keyboard -->
+    <div id="mobile-keyboard">
+        <div class="keyboard-row">
+            <div class="keyboard-key" data-key="q">q</div>
+            <div class="keyboard-key" data-key="w">w</div>
+            <div class="keyboard-key" data-key="e">e</div>
+            <div class="keyboard-key" data-key="r">r</div>
+            <div class="keyboard-key" data-key="t">t</div>
+            <div class="keyboard-key" data-key="y">y</div>
+            <div class="keyboard-key" data-key="u">u</div>
+            <div class="keyboard-key" data-key="i">i</div>
+            <div class="keyboard-key" data-key="o">o</div>
+            <div class="keyboard-key" data-key="p">p</div>
+        </div>
+        <div class="keyboard-row">
+            <div class="keyboard-key" data-key="a">a</div>
+            <div class="keyboard-key" data-key="s">s</div>
+            <div class="keyboard-key" data-key="d">d</div>
+            <div class="keyboard-key" data-key="f">f</div>
+            <div class="keyboard-key" data-key="g">g</div>
+            <div class="keyboard-key" data-key="h">h</div>
+            <div class="keyboard-key" data-key="j">j</div>
+            <div class="keyboard-key" data-key="k">k</div>
+            <div class="keyboard-key" data-key="l">l</div>
+        </div>
+        <div class="keyboard-row">
+            <div class="keyboard-key" data-key="z">z</div>
+            <div class="keyboard-key" data-key="x">x</div>
+            <div class="keyboard-key" data-key="c">c</div>
+            <div class="keyboard-key" data-key="v">v</div>
+            <div class="keyboard-key" data-key="b">b</div>
+            <div class="keyboard-key" data-key="n">n</div>
+            <div class="keyboard-key" data-key="m">m</div>
+            <div class="keyboard-key backspace" data-key="Backspace">⌫</div>
+        </div>
+        <div class="keyboard-row">
+            <div class="keyboard-key space" data-key=" ">Space</div>
+        </div>
+    </div>
+
     <script>
         // Game variables
         let score = 0;
@@ -360,7 +483,6 @@
         const wordPools = {
             easy: [
                 "hello", "world", "game", "type", "code", "web", "fun", "key", "board", "mouse", "Free Palestine"
-                
             ],
             medium: [
                 "javascript", "developer", "keyboard", "computer", "program", "algorithm", 
@@ -387,6 +509,8 @@
         const menuButton = document.getElementById('menu-button');
         const startScreen = document.getElementById('start-screen');
         const startButton = document.getElementById('start-button');
+        const mobileKeyboard = document.getElementById('mobile-keyboard');
+        const keyboardKeys = document.querySelectorAll('.keyboard-key');
         
         // Create stars background
         function createStars() {
@@ -463,11 +587,48 @@
             return colors[Math.floor(Math.random() * colors.length)];
         }
         
+        // Mobile keyboard input handler
+        function handleKeyboardKeyPress(key) {
+            if (!gameActive) return;
+            
+            if (key === 'Backspace') {
+                input.value = input.value.slice(0, -1);
+            } else if (key === ' ') {
+                input.value += ' ';
+            } else {
+                input.value += key;
+            }
+            
+            // Trigger input event manually
+            const event = new Event('input', { bubbles: true });
+            input.dispatchEvent(event);
+            
+            // Keep focus on input
+            input.focus();
+        }
+        
         // Event listeners
         input.addEventListener('input', checkInput);
         restartButton.addEventListener('click', restartGame);
         menuButton.addEventListener('click', returnToMenu);
         startButton.addEventListener('click', startGame);
+        
+        // Add event listeners to mobile keyboard keys
+        keyboardKeys.forEach(key => {
+            key.addEventListener('click', () => {
+                const keyValue = key.getAttribute('data-key');
+                handleKeyboardKeyPress(keyValue);
+            });
+            
+            // Add touch feedback
+            key.addEventListener('touchstart', () => {
+                key.classList.add('active');
+            });
+            
+            key.addEventListener('touchend', () => {
+                key.classList.remove('active');
+            });
+        });
         
         // Game functions
         function startGame() {
@@ -682,6 +843,16 @@
         
         // Initialize
         createStars();
+        
+        // Check if mobile device and adjust game container height
+        function checkIfMobile() {
+            if (window.innerWidth <= 768) {
+                gameContainer.style.height = 'calc(100vh - 90px - 180px)'; // Account for keyboard height
+            }
+        }
+        
+        window.addEventListener('resize', checkIfMobile);
+        checkIfMobile();
     </script>
 </body>
 </html>
